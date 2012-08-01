@@ -3,11 +3,13 @@
  * Module dependencies.
  */
 
-var config = require('config'),
+var clientSessions = require("client-sessions"),
+    config = require('config'),
     express = require('express'),
     routes = require('./routes'),
     http = require('http'),
     path = require('path');
+
 
 var app = express();
 
@@ -19,8 +21,16 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
-  app.use(express.session());
+  app.use(clientSessions({
+    cookieName: 'session_state',    // defaults to session_state
+    secret: 'lkasdfkjsdlfkjdsflkj', // MUST be set
+    // true session duration:
+    // will expire after duration (ms)
+    // from last session.reset() or
+    // initial cookieing.
+    duration: 24 * 60 * 60 * 1000, // defaults to 1 day
+  }));
+
   app.use(app.router);
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
   app.use(express.static(path.join(__dirname, 'public')));

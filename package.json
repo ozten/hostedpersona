@@ -13,9 +13,10 @@
     "test": "vows tests/*.js"
   },
   "dependencies": {
+    "client-sessions": "0.0.7",
     "express": "3.0.0rc1",
-    "ejs": "*",
-    "less-middleware": "*"
+    "ejs": "0.8.0",
+    "less-middleware": "0.1.4"
   },
   "devDependencies": {},
   "optionalDependencies": {},
