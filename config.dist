@@ -1,2 +1,20 @@
 exports.port = 3000;
 exports.cookieSekrit = "ANY SECRET WILL DO; CHANGE ME";
+exports.personaBaseUrl = 'https://login.persona.org';
+
+/*
+Super lame... This is the passowrd database, until we
+add MySQL and account management pages
+
+Do this in any directory:
+    npm install sechash
+    node
+    var sechash = require('sechash');
+    sechash.strongHashSync('secret password')
+
+Paste the output below along with your email address. Remove
+the alice@exampe.com entry.
+*/
+exports.passwd = {
+    "alice@example.com": "aa29ba:sha1:2000:f3ed24b800e2177979deb16563866e5751f73346"
+}

@@ -4,17 +4,27 @@
  */
 
 var clientSessions = require("client-sessions"),
-    config = require('config'),
+    config,
     express = require('express'),
     routes = require('./routes'),
     http = require('http'),
     path = require('path');
 
+try {
+  config = require('./config');
+  if (config.passwd['alice@example.com']) {
+    throw new Error('No password database');
+  }
+} catch (e) {
+  console.error('ERROR: You must copy config.dist to config.js. ' +
+    'You must change all secrets and add a valid password.');
+  process.exit(1);
+}
 
 var app = express();
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', config.port);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.favicon());
@@ -22,8 +32,8 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(clientSessions({
-    cookieName: 'session_state',    // defaults to session_state
-    secret: 'lkasdfkjsdlfkjdsflkj', // MUST be set
+    cookieName: 'session_state',
+    secret: config.cookieSekrit,
     // true session duration:
     // will expire after duration (ms)
     // from last session.reset() or
