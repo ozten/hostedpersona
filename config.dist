@@ -1,0 +1,2 @@
+exports.port = 3000;
+exports.cookieSekrit = "ANY SECRET WILL DO; CHANGE ME";
