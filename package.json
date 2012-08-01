@@ -1,0 +1,25 @@
+{
+  "author": "Austin King <shout@ozten.com> (http://ozten.com)",
+  "name": "hostedpersona.me",
+  "description": "A Persona IdP which you can delegate hosting too",
+  "version": "0.0.0",
+  "homepage": "https://hostedpersona.me",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ozten/hostedpersona.git"
+  },
+  "scripts": {
+    "start": "node app",
+    "test": "vows tests/*.js"
+  },
+  "dependencies": {
+    "express": "3.0.0rc1",
+    "ejs": "*",
+    "less-middleware": "*"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
