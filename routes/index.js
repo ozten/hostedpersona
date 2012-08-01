@@ -1,4 +1,5 @@
 var auth = require('../lib/auth'),
+    certify = require('../lib/certifier'),
     config = require('../config'),
     fs = require('fs'),
     path = require('path');
@@ -49,8 +50,57 @@ exports.provisioning = function (req, res) {
   });
 };
 
-exports.generateCertificate = function (req, res) {
+  var cryptoError = function (res) {
+    res.writeHead(500);
+    res.end();
+    return false;
+  };
 
+exports.generateCertificate = function (req, res) {
+  var current_user = session.getCurrentUser(req),
+  authed_email = req.body.authed_email;
+
+  if (!req.session.emails ||
+      -1 === req.session.emails.indexOf(authed_email)) {
+    res.writeHead(401);
+    return res.end();
+  }
+
+  if (!req.body.pubkey || !req.body.duration) {
+    res.writeHead(400);
+    return res.end();
+  }
+
+  var certified_cb = function(err, cert) {
+    var user_cert = cert,
+    certificate;
+
+    if (err) {
+      return cryptoError(res);
+    } else {
+      try {
+        var certResp = JSON.parse(cert);
+        if (certResp && certResp.success) {
+          // Kill Session Issue #62
+          req.session.reset();
+          res.json({ cert: certResp.certificate });
+        } else {
+          console.error('certifier expected success: true, but got ', cert);
+          return cryptoError(res);
+        }
+
+      } catch (e) {
+        console.error('Bad output from certifier');
+        if (e.stack) console.error(e.stack);
+        return cryptoError(res);
+      }
+    }
+  };
+
+  certify(req.body.pubkey,
+          current_user,
+          req.body.duration,
+          certified_cb);
 }
 
 exports.authentication = function (req, res) {

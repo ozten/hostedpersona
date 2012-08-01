@@ -19,3 +19,6 @@ the alice@exampe.com entry.
 exports.passwd = {
     "alice@example.com": "aa29ba:sha1:2000:f3ed24b800e2177979deb16563866e5751f73346"
 }
+
+exports.certifierHost = 'localhost';
+exports.certifierPort = '3001';
