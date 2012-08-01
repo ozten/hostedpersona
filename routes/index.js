@@ -1,4 +1,5 @@
-var config = require('../config'),
+var auth = require('../lib/auth'),
+    config = require('../config'),
     fs = require('fs'),
     path = require('path');
 
@@ -45,7 +46,7 @@ exports.provisioning = function (req, res) {
     browserid_server: config.personaBaseUrl,
     emails: emails,
     num_emails: emails.length
-  })
+  });
 };
 
 exports.generateCertificate = function (req, res) {
@@ -53,5 +54,25 @@ exports.generateCertificate = function (req, res) {
 }
 
 exports.authentication = function (req, res) {
+  res.render('authentication', {
+    browserid_server: config.personaBaseUrl
+  });
+};
 
+exports.auth = function (req, res) {
+  if (req.body.email && req.body.password) {
+    var email = req.body.email,
+        password = req.body.password;
+    auth.checkPassword(email, password, function (err, authed) {
+      if (err) {
+        res.send('Error checking password', 500);
+      } else if (authed) {
+         res.send('OK');
+      } else {
+        res.send('nope', 401);
+      }
+    });
+  } else {
+    res.send('Missing email / password', 400);
+  }
 };
