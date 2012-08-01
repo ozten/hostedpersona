@@ -1,4 +1,5 @@
-var fs = require('fs'),
+var config = require('../config'),
+    fs = require('fs'),
     path = require('path');
 
 var publicKey;
@@ -35,8 +36,21 @@ exports.wellKnown = function (req, res) {
 }
 
 exports.provisioning = function (req, res) {
-  res.render('provisioning' {emails: session})
+  emails = [];
+  if (req.session && req.session.emails) {
+    console.log('Sure, we have a session', req.session);
+    emails = req.session.emails;
+  }
+  res.render('provisioning', {
+    browserid_server: config.personaBaseUrl,
+    emails: emails,
+    num_emails: emails.length
+  })
 };
+
+exports.generateCertificate = function (req, res) {
+
+}
 
 exports.authentication = function (req, res) {
 

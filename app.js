@@ -38,8 +38,14 @@ app.configure(function(){
     // will expire after duration (ms)
     // from last session.reset() or
     // initial cookieing.
-    duration: 24 * 60 * 60 * 1000, // defaults to 1 day
+    duration: config.cookieDuration
   }));
+  app.use(express.csrf());
+  app.use(function (req, resp, next) {
+    resp.locals({'csrf_token': req.session._csrf});
+    next();
+  });
+
 
   app.use(app.router);
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
@@ -53,6 +59,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/.well-known/browserid', routes.wellKnown);
 app.get('/provisioning', routes.provisioning);
+app.post('/gen-cert', routes.generateCertificate);
 app.get('/authentication', routes.authentication);
 
 http.createServer(app).listen(app.get('port'), function(){
