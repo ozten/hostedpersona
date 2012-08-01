@@ -57,8 +57,7 @@ exports.provisioning = function (req, res) {
   };
 
 exports.generateCertificate = function (req, res) {
-  var current_user = session.getCurrentUser(req),
-  authed_email = req.body.authed_email;
+  var authed_email = req.body.authed_email;
 
   if (!req.session.emails ||
       -1 === req.session.emails.indexOf(authed_email)) {
@@ -98,7 +97,7 @@ exports.generateCertificate = function (req, res) {
   };
 
   certify(req.body.pubkey,
-          current_user,
+          authed_email,
           req.body.duration,
           certified_cb);
 }
