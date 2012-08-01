@@ -67,7 +67,16 @@ exports.auth = function (req, res) {
       if (err) {
         res.send('Error checking password', 500);
       } else if (authed) {
-         res.send('OK');
+
+        emails = [];
+        if (req.session && req.session.emails) {
+          console.log('Sure, we have a session', req.session);
+          emails = req.session.emails;
+        }
+        emails.push(email);
+        req.session.emails = emails;
+        res.send('OK');
+
       } else {
         res.send('nope', 401);
       }
@@ -75,4 +84,9 @@ exports.auth = function (req, res) {
   } else {
     res.send('Missing email / password', 400);
   }
+};
+
+exports.logout = function (req, res) {
+  req.session.reset();
+  res.send('Bye');
 };

@@ -62,6 +62,7 @@ app.get('/provisioning', routes.provisioning);
 app.post('/gen-cert', routes.generateCertificate);
 app.get('/authentication', routes.authentication);
 app.post('/auth', routes.auth);
+app.get('/logout', routes.logout);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
