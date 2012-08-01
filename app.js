@@ -51,6 +51,9 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/.well-known/browserid', routes.wellKnown);
+app.get('/provisioning', routes.provisioning);
+app.get('/authentication', routes.authentication);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
