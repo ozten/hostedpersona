@@ -24,7 +24,7 @@ var provision = function (active_users, num_users) {
       console.log('no session, failing');
       navigator.id.raiseProvisioningFailure(msg);
     } else {
-      if (active_users[ email ] === true) {
+      if (-1 !== active_users.indexOf(email)) {
         console.log('emails matched ' + active_users + ' == ' + email + ' next genKeyPair');
         navigator.id.genKeyPair(function(pubkey) {
 
