@@ -10,9 +10,16 @@
   <div id="content">
     <form action="/auth" method="POST">
       <input type="hidden" name="_csrf" value="<%= csrf_token %>" />
-      <label for="email">Email</label><input type="email" id="email" name="email" value="" xdisabled="true" />
-      <label for="password">Password</label><input type="password" id="password" name="password" value="" />
-      <button>Sign In</button>
+      <fieldset id="emailfield">
+        <label for="email">Email</label><input type="email" id="email" name="email" value="" xdisabled="true" />
+      </fieldset>
+      <fieldset>
+        <label for="password">Password</label><input type="password" id="password" name="password" value="" />
+      </fieldset>
+      <fieldset class="buttons">
+        <button>Sign In</button>
+        <button id="cancelbtn">Cancel</button>
+      </fieldset>
     </form>
   </div>
 </div>
@@ -24,6 +31,9 @@ function enableForm () {
 }
 function disableForm () {
   $('input, button').attr('disabled', 'true');
+}
+function replaceEmail(email, imgUrl) {
+  $('#emailfield').html('<div class="avatar"><img src="' + imgUrl + '" width="128" height="128" />' + email + '</div>');
 }
 $('form').submit(function (e) {
   e.preventDefault();
@@ -42,11 +52,17 @@ $('form').submit(function (e) {
     complete: function (xhr, status) {
       enableForm();
     }
-  })
-  return false;
+  });
+});
+$('#cancelbtn').click(function (e) {
+  e.preventDefault();
+  navigator.id.raiseAuthenticationFailure("user canceled authentication");
 });
 navigator.id.beginAuthentication(function(email) {
   $('[name=email]').val(email);
+  $.get('/avatar/' + encodeURIComponent(email), function (data) {
+    replaceEmail(email, data);
+  });
   $('[name=password]').focus();
 });
 </script>

@@ -2,6 +2,7 @@ var auth = require('../lib/auth'),
     certify = require('../lib/certifier'),
     config = require('../config'),
     fs = require('fs'),
+    libravatar = require('libravatar'),
     path = require('path');
 
 var publicKey;
@@ -138,4 +139,18 @@ exports.auth = function (req, res) {
 exports.logout = function (req, res) {
   req.session.reset();
   res.send('Bye');
+};
+
+exports.avatar = function (req, res) {
+  libravatar.url({
+    email: req.params.email,
+    size: 120
+  }, function (err, url) {
+    if (err) {
+      res.send('Ouch', 400);
+    } else {
+      res.send(url);
+    }
+  });
+
 };
