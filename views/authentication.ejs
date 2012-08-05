@@ -33,7 +33,8 @@ function disableForm () {
   $('input, button').attr('disabled', 'true');
 }
 function replaceEmail(email, imgUrl) {
-  $('#emailfield').html('<div class="avatar"><img src="' + imgUrl + '" width="128" height="128" />' + email + '</div>');
+  $('[for=email], [name=email]').hide();
+  $('#emailfield').append('<div class="avatar"><img src="' + imgUrl + '" width="128" height="128" />' + email + '</div>');
 }
 $('form').submit(function (e) {
   e.preventDefault();
