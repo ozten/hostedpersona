@@ -9,7 +9,7 @@
     "url": "git://github.com/ozten/hostedpersona.git"
   },
   "scripts": {
-    "start": "node app",
+    "start": "node app.js",
     "test": "vows tests/*.js"
   },
   "dependencies": {
@@ -18,6 +18,7 @@
     "express": "3.0.0rc1",
     "less-middleware": "0.1.4",
     "libravatar": "2.0.0",
+    "mysql": "2.0.0-alpha3",
     "sechash": "0.2.1"
 
   },

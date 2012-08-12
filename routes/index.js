@@ -1,9 +1,11 @@
-var auth = require('../lib/auth'),
+var accounts = require('../lib/accounts'),
+    auth = require('../lib/auth'),
     certify = require('../lib/certifier'),
     config = require('../config'),
     fs = require('fs'),
     libravatar = require('libravatar'),
-    path = require('path');
+    path = require('path'),
+    verify = require('../lib/verify');
 
 var publicKey;
 
@@ -21,13 +23,7 @@ fs.readFile(publicKeyPath, 'utf8', function (err, data) {
   }
 });
 
-/*
- * GET home page.
- */
-
-exports.index = function(req, res) {
-  res.render('index');
-};
+/************ BrowserID routes **************/
 
 exports.wellKnown = function (req, res) {
   if (publicKey) {
@@ -113,21 +109,16 @@ exports.auth = function (req, res) {
   if (req.body.email && req.body.password) {
     var email = req.body.email,
         password = req.body.password;
-    auth.checkPassword(email, password, function (err, authed) {
+    _commonAuth(email, password, true, function (err, authed) {
       if (err) {
+        console.log('AUTH Error: ', err, ' for ', email);
         res.send('Error checking password', 500);
       } else if (authed) {
-
-        emails = [];
-        if (req.session && req.session.emails) {
-          console.log('Sure, we have a session', req.session);
-          emails = req.session.emails;
-        }
-        emails.push(email);
-        req.session.emails = emails;
+        console.log('AUTH Success');
+        _commonSession(email, req);
         res.send('OK');
-
       } else {
+        console.log('AUTH FAILED');
         res.send('nope', 401);
       }
     });
@@ -136,9 +127,135 @@ exports.auth = function (req, res) {
   }
 };
 
+_commonAuth = function (email, password, forPersona, cb) {
+  auth.checkPassword(email, password, forPersona, function (err, authed) {
+    console.log('_commonAuth callback err=', err, 'authed=', authed);
+    if (err) {
+      console.error(err);
+      cb(err, false);
+    } else {
+      cb(null, authed);
+    }
+  });
+};
+
+_commonSession = function (email, req) {
+  emails = [];
+  if (req.session && req.session.emails) {
+    emails = req.session.emails;
+  }
+  emails.push(email);
+  req.session.emails = emails;
+};
+
+/**************** General Routes *************/
+
+/*
+ * GET home page.
+ */
+exports.index = function(req, res) {
+  var ctx = {
+    content: 'pages/homepage'
+  };
+  res.render('account_layout', ctx);
+};
+
 exports.logout = function (req, res) {
   req.session.reset();
-  res.send('Bye');
+  res.redirect('/account');
+};
+
+exports.register = function (req, res) {
+  var ctx = {
+    content: 'pages/register',
+    errors: {},
+    data: {email: '', password: '', password2: ''}
+  };
+  res.render('account_layout', ctx);
+};
+
+exports.registerAccount = function (req, res) {
+  /*
+    1) verify email is email-like
+    2) verify passwords match
+    3) verify account doesn't exist
+    4) create account
+    5) SUCCESS - redirect to account
+  */
+  var emailError = verify.email(req.body.email);
+  var data = req.body;
+  var ctx = {
+    content: 'pages/register',
+    errors: {},
+    data: data
+  };
+  if (emailError) {
+    ctx.errors.email = emailError;
+    return res.render('account_layout', ctx);
+  };
+
+  var passError = verify.password(req.body.password,
+                                  req.body.password2);
+  if (passError) {
+    ctx.errors.email = passError;
+    return res.render('account_layout', ctx);
+  }
+  accounts.createAccount(req.body.email, req.body.password, false, function (err) {
+    if (err) {
+      ctx.errors.email = err;
+      return res.render('account_layout', ctx);
+    }
+    res.redirect('/account');
+  });
+};
+
+exports.account = function (req, res) {
+  var ctx = {
+    content: 'pages/accounts'
+  };
+  if (req.session && req.session.emails) {
+    ctx.title = 'My Accounts';
+    accounts.enabled(req.session.emails, function (err, accounts) {
+      if (err) {
+        ctx.accounts = [];
+      } else {
+        ctx.accounts = accounts;
+      }
+      return res.render('account_layout', ctx);
+    });
+  } else {
+    var ctx = {
+      content: 'pages/account_login',
+      errors: {},
+      data: {email: '', password: ''}
+    };
+    return res.render('account_layout', ctx);
+  }
+};
+
+exports.accountLogin = function (req, res) {
+  var email = req.body.email,
+      password = req.body.password;
+  var ctx = {
+    content: 'pages/account_login',
+    errors: {},
+    data: {email: '', password: ''}
+  };
+  _commonAuth(email, password, false, function (err, authed) {
+    ctx.data = req.body;
+    if (err) {
+      console.error("Error duing account login:" + err);
+      ctx.errors.general = 'System Error, please try again later',
+
+      res.render('account_layout', ctx);
+    } else if (authed) {
+      _commonSession(req.body.email, req);
+      res.redirect('/account');
+    } else {
+      ctx.errors.general = 'Wrong email or password.';
+      res.render('account_layout', ctx);
+    }
+  });
 };
 
 exports.avatar = function (req, res) {

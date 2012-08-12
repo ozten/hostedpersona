@@ -12,10 +12,8 @@ var clientSessions = require("client-sessions"),
 
 try {
   config = require('./config');
-  if (config.passwd['alice@example.com']) {
-    throw new Error('No password database');
-  }
 } catch (e) {
+  console.error(e);
   console.error('ERROR: You must copy config.dist to config.js. ' +
     'You must change all secrets and add a valid password.');
   process.exit(1);
@@ -56,13 +54,25 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
+// Common template variables
+app.locals({
+  content: null,
+  title: 'Hosted Persona',
+  navigation: null
+});
+
 app.get('/.well-known/browserid', routes.wellKnown);
 app.get('/provisioning', routes.provisioning);
 app.post('/gen-cert', routes.generateCertificate);
 app.get('/authentication', routes.authentication);
 app.post('/auth', routes.auth);
+
+app.get('/', routes.index);
 app.get('/logout', routes.logout);
+app.get('/register', routes.register);
+app.post('/register-account', routes.registerAccount);
+app.get('/account', routes.account);
+app.post('/account-login', routes.accountLogin);
 app.get('/avatar/:email', routes.avatar);
 
 http.createServer(app).listen(app.get('port'), function(){

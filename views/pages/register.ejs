@@ -1,0 +1,33 @@
+    <h1>Register an Account</h1>
+    <p>Hosted Persona needs to create an account for you. Use your
+      email address for your personal domain.</p>
+    <% if (errors && errors.db) { %>
+          <p class="error"><%= errors.db %></p>
+        <% } %>
+    <form action="/register-account" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrf_token %>" />
+      <fieldset>
+        <% if (errors && errors.email) { %>
+          <p class="error"><%= errors.email %></p>
+        <% } %>
+        <label for="email">Email</label>
+        <input id="email" name="email" value="<%= data.email %>" type="email" />
+      </fieldset>
+      <% /* Password instead of BrowserID Issue #1 */ %>
+      <fieldset>
+        <% if (errors && errors.password) { %>
+          <p class="error"><%= errors.password %></p>
+        <% } %>
+        <label for="password">Password</label>
+        <input id="password" name="password" value="<%= data.password %>" type="password" />
+      </fieldset>
+      <fieldset>
+        <label for="password2">Confirm Password</label>
+        <input id="password2" name="password2" value="<%= data.password2 %>" type="password" />
+      </fieldset>
+      <p><strong>You must control</strong> the domain name for this email addresses, or
+        this ain't gonna work.</p>
+      <fieldset>
+        <button>Request Hosting</button>
+      </fieldset>
+    </form>

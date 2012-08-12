@@ -1,0 +1,27 @@
+    <h1>Log In</h1>
+    <% if (errors && errors.db) { %>
+          <p class="error"><%= errors.db %></p>
+    <% } %>
+    <% if (errors && errors.general) { %>
+          <p class="error"><%= errors.general %></p>
+    <% } %>
+    <form action="/account-login" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrf_token %>" />
+      <% /* We will always log usres in with a password and never via BrowserID */ %>
+      <% /* TODO: reuse form elements from authentication.ejs */ %>
+      <fieldset id="emailfield">
+        <% if (errors && errors.email) { %>
+          <p class="error"><%= errors.email %></p>
+        <% } %>
+        <label for="email">Email</label><input type="email" id="email" name="email" value="<%= data.email %>" xdisabled="true" />
+      </fieldset>
+      <fieldset>
+        <% if (errors && errors.password) { %>
+          <p class="error"><%= errors.password %></p>
+        <% } %>
+        <label for="password">Password</label><input type="password" id="password" name="password" value="<%= data.password %>" />
+      </fieldset>
+      <fieldset class="buttons">
+        <button>Sign In</button>
+      </fieldset>
+    </form>

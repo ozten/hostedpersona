@@ -1,0 +1,25 @@
+<h1>My Accounts</h1>
+<p>Below are the Hosted Persona accounts you're currently logged in as:</p>
+<ul>
+<% for (var i=0; i < accounts.length; i++) {
+     var cssClass = accounts[i].enabled ? 'enabled' : 'disabled';
+  %>
+  <li class="<%= cssClass %>">
+    <%= accounts[i].email %>
+    <% if (accounts[i].enabled) { %> Enabled <% } else { %><strong>Disabled</strong><% }  %></li>
+<% } %>
+</ul>
+
+<p>If your email address says <span class="disabled">disabled</span>, <strong>Email ozten</strong> and let me know
+you want me to be your service provider.</p>
+<p>Don't forget to <a href="/register">register</a> an account for each email address you want to use
+with Hosted Persona.</p>
+<h2>3 Easy steps</h2>
+<p>Turning on your Hosted Persona</p>
+<ol>
+  <li>Get an SSL certificate for your personal website, so that https://mywebsite.com works.</li>
+  <li>At this URL <code><a href="http://ozten.com/.well-known/browserid">https://mywebsite.com/.well-known/browserid</a></code>. The file's contents should be just <a href="http://ozten.com/.well-known/browserid">like this</a>. You might need to also make this file: <code>/.well-known/.htaccess</code> file with these contents <pre><code>DefaultType application/json</code></pre></li>
+  <li>BOOM, there is no step 3...</li>
+</ol>
+<p></p>
+<p></p>
