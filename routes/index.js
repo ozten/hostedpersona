@@ -162,7 +162,7 @@ exports.index = function(req, res) {
 
 exports.logout = function (req, res) {
   req.session.reset();
-  res.redirect('/account');
+  res.redirect('https://hostedpersona.me/account');
 };
 
 exports.register = function (req, res) {
@@ -205,7 +205,7 @@ exports.registerAccount = function (req, res) {
       ctx.errors.email = err;
       return res.render('account_layout', ctx);
     }
-    res.redirect('/account');
+    res.redirect('https://hostedpersona.me/account');
   });
 };
 
