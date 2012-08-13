@@ -245,12 +245,12 @@ exports.accountLogin = function (req, res) {
     ctx.data = req.body;
     if (err) {
       console.error("Error duing account login:" + err);
-      ctx.errors.general = 'System Error, please try again later',
+      ctx.errors.general = 'System Error, please try again later';
 
       res.render('account_layout', ctx);
     } else if (authed) {
       _commonSession(req.body.email, req);
-      res.redirect('/account');
+      res.redirect('https://hostedpersona.me/account');
     } else {
       ctx.errors.general = 'Wrong email or password.';
       res.render('account_layout', ctx);
