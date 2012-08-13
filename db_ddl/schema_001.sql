@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS `users` (
   hash VARCHAR(58) NOT NULL,
   enabled CHAR(1) DEFAULT 'N',
   PRIMARY KEY (id),
-  UNIQUE INDEX (email)
+  UNIQUE (email)
 );
