@@ -162,7 +162,7 @@ exports.index = function(req, res) {
 
 exports.logout = function (req, res) {
   req.session.reset();
-  res.redirect('https://hostedpersona.me/account');
+  res.redirect(config.baseUrl + '/account');
 };
 
 exports.register = function (req, res) {
@@ -205,7 +205,7 @@ exports.registerAccount = function (req, res) {
       ctx.errors.email = err;
       return res.render('account_layout', ctx);
     }
-    res.redirect('https://hostedpersona.me/account');
+    res.redirect(config.baseUrl + '/account');
   });
 };
 
@@ -250,7 +250,7 @@ exports.accountLogin = function (req, res) {
       res.render('account_layout', ctx);
     } else if (authed) {
       _commonSession(req.body.email, req);
-      res.redirect('https://hostedpersona.me/account');
+      res.redirect(config.baseUrl + '/account');
     } else {
       ctx.errors.general = 'Wrong email or password.';
       res.render('account_layout', ctx);

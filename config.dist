@@ -1,3 +1,5 @@
+// Public URL that should prefix redirects and links
+exports.baseUrl = 'http://localhost:3000'
 exports.port = 3000;
 exports.cookieSekrit = "ANY SECRET WILL DO; CHANGE ME";
 exports.cookieDuration = 24 * 60 * 60 * 1000; // defaults to 1 day
