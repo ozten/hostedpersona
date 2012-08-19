@@ -1,0 +1,5 @@
+#!/bin/sh
+exec 2>&1
+PATH=/usr/bin:/bin
+mkdir -p /var/log/hostedpersona/
+exec setuidgid vagrant node /home/vagrant/hostedpersona/app.js multilog t s10485760 n5 '!tai64nlocal' /var/log/hostedpersona/hostedpersona.log

@@ -1,0 +1,9 @@
+#!/bin/sh
+exec 2>&1
+PATH=/usr/bin:/bin
+mkdir -p /var/log/browserid-certifier/
+chown -R vagrant:vagrant /var/log/browserid-certifier/
+exec setuidgid vagrant node /home/vagrant/browserid-certifier/bin/certifier \
+ > /var/log/browserid-certifier/certifier.log
+# multilog t s10485760 n5 '!tai64nlocal' /var/log/browserid-certifier/certifier.log
+
