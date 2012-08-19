@@ -28,7 +28,10 @@ fs.readFile(publicKeyPath, 'utf8', function (err, data) {
 exports.wellKnown = function (req, res) {
   if (publicKey) {
     res.setHeader('Content-Type', 'application/json');
-    res.render('well-known', {publicKey: publicKey})
+    res.render('well-known', {
+      layout: null,
+      publicKey: publicKey
+    })
   } else {
     res.send('Loading public key', 500);
   }
@@ -43,6 +46,7 @@ exports.provisioning = function (req, res) {
   res.render('provisioning', {
     browserid_server: config.personaBaseUrl,
     emails: emails,
+    layout: null,
     num_emails: emails.length
   });
 };
@@ -101,7 +105,8 @@ exports.generateCertificate = function (req, res) {
 
 exports.authentication = function (req, res) {
   res.render('authentication', {
-    browserid_server: config.personaBaseUrl
+    browserid_server: config.personaBaseUrl,
+    layout: null
   });
 };
 
@@ -154,24 +159,21 @@ _commonSession = function (email, req) {
  * GET home page.
  */
 exports.index = function(req, res) {
-  var ctx = {
-    content: 'pages/homepage'
-  };
-  res.render('account_layout', ctx);
+  var ctx = {};
+  res.render('pages/homepage', ctx);
 };
 
 exports.logout = function (req, res) {
-  req.session.reset();
+  req.session.reset(['_csrf']);
   res.redirect(config.baseUrl + '/account');
 };
 
 exports.register = function (req, res) {
   var ctx = {
-    content: 'pages/register',
     errors: {},
-    data: {email: '', password: '', password2: ''}
+    data: {email: '', password: '', password2: ''},
   };
-  res.render('account_layout', ctx);
+  res.render('pages/register', ctx);
 };
 
 exports.registerAccount = function (req, res) {
@@ -185,34 +187,31 @@ exports.registerAccount = function (req, res) {
   var emailError = verify.email(req.body.email);
   var data = req.body;
   var ctx = {
-    content: 'pages/register',
     errors: {},
     data: data
   };
   if (emailError) {
     ctx.errors.email = emailError;
-    return res.render('account_layout', ctx);
+    return res.render('pages/register', ctx);
   };
 
   var passError = verify.password(req.body.password,
                                   req.body.password2);
   if (passError) {
     ctx.errors.email = passError;
-    return res.render('account_layout', ctx);
+    return res.render('pages/register', ctx);
   }
   accounts.createAccount(req.body.email, req.body.password, false, function (err) {
     if (err) {
       ctx.errors.email = err;
-      return res.render('account_layout', ctx);
+      return res.render('pages/register', ctx);
     }
     res.redirect(config.baseUrl + '/account');
   });
 };
 
 exports.account = function (req, res) {
-  var ctx = {
-    content: 'pages/accounts'
-  };
+  var ctx = {};
   if (req.session && req.session.emails) {
     ctx.title = 'My Accounts';
     accounts.enabled(req.session.emails, function (err, accounts) {
@@ -221,21 +220,21 @@ exports.account = function (req, res) {
       } else {
         ctx.accounts = accounts;
       }
-      return res.render('account_layout', ctx);
+      return res.render('pages/accounts', ctx);
     });
   } else {
     var ctx = {
-      content: 'pages/account_login',
       errors: {},
       data: {email: '', password: ''}
     };
-    return res.render('account_layout', ctx);
+    return res.render('pages/account_login', ctx);
   }
 };
 
 exports.accountLogin = function (req, res) {
   var email = req.body.email,
       password = req.body.password;
+  req.session.reset(['_csrf']);
   var ctx = {
     content: 'pages/account_login',
     errors: {},
@@ -247,13 +246,13 @@ exports.accountLogin = function (req, res) {
       console.error("Error duing account login:" + err);
       ctx.errors.general = 'System Error, please try again later';
 
-      res.render('account_layout', ctx);
+      res.render('pages/account_login', ctx);
     } else if (authed) {
       _commonSession(req.body.email, req);
       res.redirect(config.baseUrl + '/account');
     } else {
       ctx.errors.general = 'Wrong email or password.';
-      res.render('account_layout', ctx);
+      res.render('pages/account_login', ctx);
     }
   });
 };

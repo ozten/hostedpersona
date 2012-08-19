@@ -1,0 +1,18 @@
+<!DOCTYPE html><% /*
+There are two layouts in hostedpersona.me
+1) The layout baked into /authentication used in Persona login
+2) This layout for the rest of the "accounts" website
+*/ %><html>
+<head>
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body class="accounts">
+<div id="page">
+  <p><a href="/logout">Logout</a>
+  <div id="content">
+<%- body %>
+  </div>
+</div>
+</body>
+</html>

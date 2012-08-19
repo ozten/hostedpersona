@@ -10,6 +10,12 @@ var clientSessions = require("client-sessions"),
     http = require('http'),
     path = require('path');
 
+
+process.on('uncaughtException', function (err) {
+    if (err.stack) console.log('Caught exception: ' + err.stack);
+    else console.log('Caught exception: ' + err);
+});
+
 try {
   config = require('./config');
 } catch (e) {
@@ -19,12 +25,15 @@ try {
   process.exit(1);
 }
 
-var app = express();
+var app = express.createServer();
 
 app.configure(function(){
-  app.set('port', config.port);
+  //app.set('port', config.port);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
+    app.set('view options', {
+	layout: 'layout_accounts'
+});
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
@@ -38,6 +47,7 @@ app.configure(function(){
     // initial cookieing.
     duration: config.cookieDuration
   }));
+
   app.use(express.csrf());
   app.use(function (req, resp, next) {
     resp.locals({'csrf_token': req.session._csrf});
@@ -75,6 +85,10 @@ app.get('/account', routes.account);
 app.post('/account-login', routes.accountLogin);
 app.get('/avatar/:email', routes.avatar);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+app.listen(config.port, function(err){
+  if (err) {
+    console.error(err);
+  } else {
+    console.log("Express server listening on port " + app.get('port'));
+  }
 });

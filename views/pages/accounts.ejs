@@ -4,7 +4,7 @@
 <% for (var i=0; i < accounts.length; i++) {
      var cssClass = accounts[i].enabled ? 'enabled' : 'disabled';
   %>
-  <li class="<%= cssClass %>">
+  <li class="<%= cssClass %> current-email">
     <%= accounts[i].email %>
     <% if (accounts[i].enabled) { %> Enabled <% } else { %><strong>Disabled</strong><% }  %></li>
 <% } %>
