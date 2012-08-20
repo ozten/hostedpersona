@@ -1,5 +1,0 @@
-#!/bin/sh
-PATH=/usr/local/bin:/usr/bin
-cd /home/ozten/hostedpersona.me/
-mkdir -p var/log/
-exec node app.js  2>&1 > var/log/hostedpersona.me.log
