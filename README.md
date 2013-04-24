@@ -30,6 +30,5 @@ Install the Certifier per it's README. Got that up and working?
 
 ## Status
 
-This is a minimum viable product for personal use. I'd like to
-add a MySQL database with secure password storage and some
-account management features, soon.
+I use this to host my Identity as well as a couple other folks.
+Not the highest security in the world, but not the worst either.
